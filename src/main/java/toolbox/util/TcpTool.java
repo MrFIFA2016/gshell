@@ -28,7 +28,8 @@ public class TcpTool {
      * @see 编码与解码请求响应字节时,均采用双方约定的字符集,即本方法的第四个参数reqCharset
      */
     public static Map<String, String> sendTCPRequest(String IP, Integer port, String reqData, String reqCharset) {
-        logger.info(reqData);
+        printReq(reqData);
+
         Map<String, String> respMap = new HashMap<String, String>();
         OutputStream out = null;      //写
         InputStream in = null;        //读
@@ -46,6 +47,8 @@ public class TcpTool {
             socket.setKeepAlive(true);
             socket.connect(new InetSocketAddress(IP, port), 30000);
             localPort = String.valueOf(socket.getLocalPort());
+
+            System.out.println(String.format("%s - %s  | Port: %s - > %s", socket.getLocalAddress().getHostAddress(), IP, localPort, port));
             /**
              * 发送TCP请求
              */
@@ -65,7 +68,7 @@ public class TcpTool {
              * 解码TCP响应的完整报文
              */
             respData = bytesOut.toString(reqCharset);
-            respDataHex = formatToHexStringWithASCII(bytesOut.toByteArray());
+            respDataHex = formatToHexStringWithASCII(bytesOut.toByteArray(), "收到数据");
         } catch (Exception e) {
             System.out.println("与[" + IP + ":" + port + "]通信遇到异常,堆栈信息如下");
             e.printStackTrace();
@@ -92,8 +95,15 @@ public class TcpTool {
      * @see 该方法会将字节数组中的所有字节均格式化为字符串
      * @see 使用说明详见<code>formatToHexStringWithASCII(byte[], int, int)</code>方法
      */
-    private static String formatToHexStringWithASCII(byte[] data) {
-        return formatToHexStringWithASCII(data, 0, data.length);
+    private static String formatToHexStringWithASCII(byte[] data, String label) {
+        return formatToHexStringWithASCII(data, 0, data.length, label);
+    }
+
+    private static void printReq(String req) {
+        System.out.println("打印参数：-->");
+        String str = formatToHexStringWithASCII(req.getBytes(), "请求参数");
+        System.out.println(str);
+        System.out.println("\r\n<--结束参数打印");
     }
 
 
@@ -109,11 +119,11 @@ public class TcpTool {
      * @see 该方法在将字节转为十六进制时,默认使用的是<code>java.util.Locale.getDefault()</code>
      * @see 详见String.format(String, Object...)方法和new String(byte[], int, int)构造方法
      */
-    private static String formatToHexStringWithASCII(byte[] data, int offset, int length) {
+    private static String formatToHexStringWithASCII(byte[] data, int offset, int length, String label) {
         int end = offset + length;
         StringBuilder sb = new StringBuilder();
         StringBuilder sb2 = new StringBuilder();
-        sb.append("\r\n------------------------------------------------------------------------");
+        sb.append("\r\n------------------------------" + label + "-------------------------------------");
         boolean chineseCutFlag = false;
         for (int i = offset; i < end; i += 16) {
             sb.append(String.format("\r\n%04X: ", i - offset)); //X或x表示将结果格式化为十六进制整数
@@ -153,7 +163,7 @@ public class TcpTool {
             sb.append("| ");
             sb.append(sb2.toString());
         }
-        sb.append("\r\n------------------------------------------------------------------------");
+        sb.append("\r\n-------------------------------------------------------------------------\r\n");
         return sb.toString();
     }
 }
