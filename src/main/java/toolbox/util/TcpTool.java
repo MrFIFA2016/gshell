@@ -54,20 +54,19 @@ public class TcpTool {
              */
             out = socket.getOutputStream();
             out.write(reqData.getBytes());
-//            Thread.sleep(3000);
-//            out.write(reqData.getBytes());
             /**
              * 接收TCP响应
              */
             in = socket.getInputStream();
+
             ByteArrayOutputStream bytesOut = new ByteArrayOutputStream();
             byte[] buffer = new byte[4];
-            int len = -1;
+            int len;
             try {
                 while ((len = in.read(buffer)) != -1) {
                     bytesOut.write(buffer, 0, len);
-                    if (len < buffer.length)
-                        break;
+//                    if (len < buffer.length)
+//                        break;
                 }
             } catch (IOException e) {
                 System.err.println(e);
@@ -130,7 +129,7 @@ public class TcpTool {
      * @see 该方法在将字节转为十六进制时,默认使用的是<code>java.util.Locale.getDefault()</code>
      * @see 详见String.format(String, Object...)方法和new String(byte[], int, int)构造方法
      */
-    private static String formatToHexStringWithASCII(byte[] data, int offset, int length, String label) {
+    public static String formatToHexStringWithASCII(byte[] data, int offset, int length, String label) {
         int end = offset + length;
         StringBuilder sb = new StringBuilder();
         StringBuilder sb2 = new StringBuilder();
