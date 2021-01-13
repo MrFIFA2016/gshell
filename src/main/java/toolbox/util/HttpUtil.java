@@ -2,6 +2,8 @@ package toolbox.util;
 
 import okhttp3.*;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -15,7 +17,18 @@ public class HttpUtil {
     final static OkHttpClient client = new OkHttpClient.Builder().build();
 
     public static String get(String url) {
-        Request request = new Request.Builder().url(url).get().build();
+
+
+        Headers headers = Headers.of(
+                "Host", "www.baidu.com",
+                "User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv,84.0) Gecko/20100101 Firefox/84.0",
+                "Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8",
+                "Accept-Language", "zh-CN,zh;q=0.8,zh-TW;q=0.7,zh-HK;q=0.5,en-US;q=0.3,en;q=0.2",
+                "Accept-Encoding", "gzip, deflate, br",
+                "Connection", "keep-alive", "Upgrade-Insecure-Requests", "1");
+
+        Request request = new Request.Builder().url(url).headers(headers).get().build();
+
         return execNewCall(request);
     }
 
@@ -25,12 +38,20 @@ public class HttpUtil {
             response = client.newCall(request).execute();
 
             if (verbose) {
-                printHeader(request.headers(),"request");
+                printHeader(request.headers(), "request");
                 System.out.println("\r\n");
-                printHeader(response.headers(),"response");
+                printHeader(response.headers(), "response");
             }
             if (response.isSuccessful()) {
-                return response.body().string();
+                File f = new File("F:\\a.gz");
+                f.createNewFile();
+                FileOutputStream output = new FileOutputStream(f);
+                output.write(response.body().bytes());
+                output.flush();
+                output.close();
+                return "";
+
+
             }
         } catch (Exception e) {
             e.printStackTrace();
