@@ -37,43 +37,35 @@ public class TcpTool {
         String respDataHex = null;    //远程主机响应的原始字节的十六进制表示
         Socket socket = new Socket(); //客户机
         try {
-//            socket.setTcpNoDelay(true);
-//            socket.setReuseAddress(true);
-//            socket.setSoTimeout(30000);
-//            socket.setSoLinger(true, 5);
-//            socket.setSendBufferSize(1024);
-//            socket.setReceiveBufferSize(1024);
-//            socket.setKeepAlive(true);
+            socket.setTcpNoDelay(true);
+            socket.setReuseAddress(true);
+            socket.setSoTimeout(30000);
+            socket.setSoLinger(true, 5);
+            socket.setSendBufferSize(1024);
+            socket.setReceiveBufferSize(1024);
+            socket.setKeepAlive(true);
             socket.connect(new InetSocketAddress(IP, port), 30000);
             localPort = String.valueOf(socket.getLocalPort());
             /**
              * 发送TCP请求
              */
             out = socket.getOutputStream();
-            PrintStream dos = new PrintStream(out);
-
-            System.out.printf("发送数据：" + reqData);
-
-            dos.println(reqData);
-            dos.flush();
+            out.write(reqData.getBytes());
             /**
              * 接收TCP响应
              */
             in = socket.getInputStream();
-            InputStreamReader isr=new InputStreamReader(in);
-            //DataInputStream dis = new DataInputStream(in);
-//            ByteArrayOutputStream bytesOut = new ByteArrayOutputStream();
-//            byte[] buffer = new byte[512];
-//            int len = -1;
-//            while ((len = in.read(buffer)) != -1) {
-//                bytesOut.write(buffer, 0, len);
-//            }
-            BufferedReader br=new BufferedReader(new InputStreamReader(in));
-            respData = br.readLine();
+            ByteArrayOutputStream bytesOut = new ByteArrayOutputStream();
+            byte[] buffer = new byte[512];
+            int len = -1;
+            while ((len = in.read(buffer)) != -1) {
+                bytesOut.write(buffer, 0, len);
+            }
             /**
              * 解码TCP响应的完整报文
              */
-           // respDataHex = formatToHexStringWithASCII(bytesOut.toByteArray());
+            respData = bytesOut.toString(reqCharset);
+            respDataHex = formatToHexStringWithASCII(bytesOut.toByteArray());
         } catch (Exception e) {
             System.out.println("与[" + IP + ":" + port + "]通信遇到异常,堆栈信息如下");
             e.printStackTrace();

@@ -4,7 +4,7 @@ public class HttpProcessor {
     // HTTP服务根目录
 
     public void process(HttpRequest request, HttpResponse response) {
-        String uri = request.getRemoteURI();
+//        String uri = request.getRemoteURI();
         String content = "im magic";
 //        response.write("HTTP/1.1 200 OK\n");
 //        response.write("content-length: " + content.length() + "\n");

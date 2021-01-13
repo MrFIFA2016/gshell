@@ -9,7 +9,7 @@ import java.util.Map;
  */
 public class TcpToolTest {
     public static void main(String[] args) {
-        Map<String, String> ping = TcpTool.sendTCPRequest("localhost", 8000, "ping", "utf-8");
-        System.out.printf(ping.toString());
+        Map<String, String> ping = TcpTool.sendTCPRequest("127.0.0.1", 8888, "ping", "utf-8");
+        System.out.println(ping.toString());
     }
 }
