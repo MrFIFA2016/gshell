@@ -54,16 +54,25 @@ public class TcpTool {
              */
             out = socket.getOutputStream();
             out.write(reqData.getBytes());
+//            Thread.sleep(3000);
+//            out.write(reqData.getBytes());
             /**
              * 接收TCP响应
              */
             in = socket.getInputStream();
             ByteArrayOutputStream bytesOut = new ByteArrayOutputStream();
-            byte[] buffer = new byte[512];
+            byte[] buffer = new byte[4];
             int len = -1;
-            while ((len = in.read(buffer)) != -1) {
-                bytesOut.write(buffer, 0, len);
+            try {
+                while ((len = in.read(buffer)) != -1) {
+                    bytesOut.write(buffer, 0, len);
+                    if (len < buffer.length)
+                        break;
+                }
+            } catch (IOException e) {
+                System.err.println(e);
             }
+            out.write("again".getBytes());
             /**
              * 解码TCP响应的完整报文
              */
@@ -75,6 +84,8 @@ public class TcpTool {
         } finally {
             if (null != socket && socket.isConnected() && !socket.isClosed()) {
                 try {
+                    out.close();
+                    in.close();
                     socket.close();
                 } catch (IOException e) {
                     System.out.println("关闭客户机Socket时发生异常,堆栈信息如下");
