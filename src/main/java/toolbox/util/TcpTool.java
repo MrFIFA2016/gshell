@@ -1,8 +1,13 @@
 package toolbox.util;
 
-import java.io.*;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.InetSocketAddress;
 import java.net.Socket;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Logger;
@@ -28,7 +33,7 @@ public class TcpTool {
      * @see 编码与解码请求响应字节时,均采用双方约定的字符集,即本方法的第四个参数reqCharset
      */
     public static Map<String, String> sendTCPRequest(String IP, Integer port, String reqData, String reqCharset) {
-        printReq(reqData);
+
 
         Map<String, String> respMap = new HashMap<String, String>();
         OutputStream out = null;      //写
@@ -48,7 +53,12 @@ public class TcpTool {
             socket.connect(new InetSocketAddress(IP, port), 30000);
             localPort = String.valueOf(socket.getLocalPort());
 
-            System.out.println(String.format("%s - %s  | Port: %s - > %s", socket.getLocalAddress().getHostAddress(), IP, localPort, port));
+            String time = new SimpleDateFormat("[HH:mm:ss SSS]").format(new Date());
+
+            System.err.println(String.format("%s建立TCP连接 %s - %s  | Port: %s - > %s", time, socket.getLocalAddress().getHostAddress(), IP, localPort, port));
+
+            printReq(reqData);
+
             /**
              * 发送TCP请求
              */
@@ -71,12 +81,12 @@ public class TcpTool {
             } catch (IOException e) {
                 System.err.println(e);
             }
-            out.write("again".getBytes());
             /**
              * 解码TCP响应的完整报文
              */
             respData = bytesOut.toString(reqCharset);
-            respDataHex = formatToHexStringWithASCII(bytesOut.toByteArray(), "收到数据");
+            //respDataHex = formatToHexStringWithASCII(bytesOut.toByteArray(), "收到数据");
+            Inspector.inspect(bytesOut.toByteArray(), "收到数据");
         } catch (Exception e) {
             System.out.println("与[" + IP + ":" + port + "]通信遇到异常,堆栈信息如下");
             e.printStackTrace();
@@ -86,6 +96,10 @@ public class TcpTool {
                     out.close();
                     in.close();
                     socket.close();
+                    String time = new SimpleDateFormat("[HH:mm:ss SSS]").format(new Date());
+
+                    System.err.println(String.format("%s关闭TCP连接", time));
+
                 } catch (IOException e) {
                     System.out.println("关闭客户机Socket时发生异常,堆栈信息如下");
                     e.printStackTrace();
@@ -95,7 +109,7 @@ public class TcpTool {
         respMap.put("localPort", localPort);
         respMap.put("reqData", reqData);
         respMap.put("respData", respData);
-        respMap.put("respDataHex", respDataHex);
+        //respMap.put("respDataHex", respDataHex);
         return respMap;
     }
 
@@ -110,10 +124,11 @@ public class TcpTool {
     }
 
     private static void printReq(String req) {
-        System.out.println("打印参数：-->");
-        String str = formatToHexStringWithASCII(req.getBytes(), "请求参数");
-        System.out.println(str);
-        System.out.println("\r\n<--结束参数打印");
+//        System.out.println("TCP打印参数：-->");
+//        String str = formatToHexStringWithASCII(req.getBytes(), "请求参数");
+//        System.out.println(str);
+//        System.out.println("\r\n<--结束参数打印");
+        Inspector.inspect(req.getBytes(), "TCP发送数据");
     }
 
 

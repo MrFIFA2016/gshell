@@ -30,7 +30,6 @@ public class HttpUtil {
     private static String execNewCall(Request request) {
         Response response = null;
         try {
-
             response = client.newCall(request).execute();
 
             if (verbose) {
@@ -73,6 +72,7 @@ public class HttpUtil {
         RequestBody requestBody = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), jsonParams);
         Request request = new Request.Builder()
                 .url(url)
+                .headers(DEFAULT_HEADERS)
                 .post(requestBody)
                 .build();
         return execNewCall(request);
@@ -97,7 +97,7 @@ public class HttpUtil {
     }
 
     public static void main(String[] args) {
-        String s = get("http://www.iwhere.com");
+        String s = get("http://www.jlnu.edu.cn");
         //System.out.print(s);
         //String s1 = StringFormatUtil.formatToHexStringWithASCII(s.getBytes(), 0, s.getBytes().length, "响应");
         Inspector.inspect(s.getBytes(),"响应");

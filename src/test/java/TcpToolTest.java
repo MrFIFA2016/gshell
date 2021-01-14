@@ -14,6 +14,6 @@ public class TcpToolTest {
         String req = "ping";
 
         Map<String, String> ping = TcpTool.sendTCPRequest("127.0.0.1", 12345, req, "utf-8");
-        System.out.println(ping.toString());
+        //System.out.println(ping.toString());
     }
 }
