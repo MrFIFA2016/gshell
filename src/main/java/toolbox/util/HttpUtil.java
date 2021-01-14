@@ -17,10 +17,15 @@ public class HttpUtil {
             "User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv,84.0) Gecko/20100101 Firefox/84.0",
             "Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8",
             "Accept-Language", "zh-CN,zh;q=0.8,zh-TW;q=0.7,zh-HK;q=0.5,en-US;q=0.3,en;q=0.2",
+            "Accept-Encoding", " gzip, deflate, br",
             "Connection", "keep-alive", "Upgrade-Insecure-Requests", "1");
 
     static boolean verbose = true;
     final static OkHttpClient client = new OkHttpClient.Builder().build();
+
+    static {
+        client.interceptors().add(new GzipRequestInterceptor());
+    }
 
     public static String get(String url) {
         Request request = new Request.Builder().url(url).headers(DEFAULT_HEADERS).get().build();
@@ -30,6 +35,7 @@ public class HttpUtil {
     private static String execNewCall(Request request) {
         Response response = null;
         try {
+
             response = client.newCall(request).execute();
 
             if (verbose) {
@@ -96,7 +102,7 @@ public class HttpUtil {
     }
 
     public static void main(String[] args) {
-        String s = get("https://zhile.io");
+        String s = get("http://www.baidu.com");
         //System.out.print(s);
         String s1 = StringFormatUtil.formatToHexStringWithASCII(s.getBytes(), 0, s.getBytes().length, "响应");
         System.out.print(s1);
