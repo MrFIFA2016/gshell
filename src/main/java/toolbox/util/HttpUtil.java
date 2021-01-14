@@ -99,7 +99,8 @@ public class HttpUtil {
     public static void main(String[] args) {
         String s = get("http://www.iwhere.com");
         //System.out.print(s);
-        String s1 = StringFormatUtil.formatToHexStringWithASCII(s.getBytes(), 0, s.getBytes().length, "响应");
-        System.out.print(s1);
+        //String s1 = StringFormatUtil.formatToHexStringWithASCII(s.getBytes(), 0, s.getBytes().length, "响应");
+        Inspector.inspect(s.getBytes(),"响应");
+        //System.out.print(s1);
     }
 }
