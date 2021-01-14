@@ -13,22 +13,17 @@ public class HttpUtil {
 
     static Logger logger = Logger.getLogger("HttpUtil");
 
+    static Headers DEFAULT_HEADERS = Headers.of(
+            "User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv,84.0) Gecko/20100101 Firefox/84.0",
+            "Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8",
+            "Accept-Language", "zh-CN,zh;q=0.8,zh-TW;q=0.7,zh-HK;q=0.5,en-US;q=0.3,en;q=0.2",
+            "Connection", "keep-alive", "Upgrade-Insecure-Requests", "1");
+
     static boolean verbose = true;
     final static OkHttpClient client = new OkHttpClient.Builder().build();
 
     public static String get(String url) {
-
-
-        Headers headers = Headers.of(
-                "Host", "www.baidu.com",
-                "User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv,84.0) Gecko/20100101 Firefox/84.0",
-                "Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8",
-                "Accept-Language", "zh-CN,zh;q=0.8,zh-TW;q=0.7,zh-HK;q=0.5,en-US;q=0.3,en;q=0.2",
-                "Accept-Encoding", "gzip, deflate, br",
-                "Connection", "keep-alive", "Upgrade-Insecure-Requests", "1");
-
-        Request request = new Request.Builder().url(url).headers(headers).get().build();
-
+        Request request = new Request.Builder().url(url).headers(DEFAULT_HEADERS).get().build();
         return execNewCall(request);
     }
 
@@ -42,17 +37,11 @@ public class HttpUtil {
                 System.out.println("\r\n");
                 printHeader(response.headers(), "response");
             }
-            if (response.isSuccessful()) {
-                File f = new File("F:\\a.gz");
-                f.createNewFile();
-                FileOutputStream output = new FileOutputStream(f);
-                output.write(response.body().bytes());
-                output.flush();
-                output.close();
-                return "";
-
-
+            if (!response.isSuccessful()) {
+                System.err.println("返回数据异常 Code:" + response.code() + " Message:" + response.message());
+                return null;
             }
+            return response.body().string();
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
@@ -74,6 +63,7 @@ public class HttpUtil {
         Request request = new Request.Builder()
                 .url(url)
                 .post(builder.build())
+                .headers(DEFAULT_HEADERS)
                 .build();
         return execNewCall(request);
     }
@@ -106,7 +96,9 @@ public class HttpUtil {
     }
 
     public static void main(String[] args) {
-        String s = get("http://www.baidu.com");
-        System.out.print(s);
+        String s = get("https://zhile.io");
+        //System.out.print(s);
+        String s1 = StringFormatUtil.formatToHexStringWithASCII(s.getBytes(), 0, s.getBytes().length, "响应");
+        System.out.print(s1);
     }
 }
