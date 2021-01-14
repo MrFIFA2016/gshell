@@ -2,8 +2,6 @@ package toolbox.util;
 
 import okhttp3.*;
 
-import java.io.File;
-import java.io.FileOutputStream;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -21,11 +19,8 @@ public class HttpUtil {
             "Connection", "keep-alive", "Upgrade-Insecure-Requests", "1");
 
     static boolean verbose = true;
-    final static OkHttpClient client = new OkHttpClient.Builder().build();
-
-    static {
-        client.interceptors().add(new GzipRequestInterceptor());
-    }
+    final static OkHttpClient client = new OkHttpClient.Builder()
+            .addNetworkInterceptor(new UnzippingInterceptor()).build();
 
     public static String get(String url) {
         Request request = new Request.Builder().url(url).headers(DEFAULT_HEADERS).get().build();
@@ -102,7 +97,7 @@ public class HttpUtil {
     }
 
     public static void main(String[] args) {
-        String s = get("http://www.baidu.com");
+        String s = get("http://www.iwhere.com");
         //System.out.print(s);
         String s1 = StringFormatUtil.formatToHexStringWithASCII(s.getBytes(), 0, s.getBytes().length, "响应");
         System.out.print(s1);
