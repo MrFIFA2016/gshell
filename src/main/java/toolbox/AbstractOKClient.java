@@ -1,15 +1,14 @@
 package toolbox;
 
 import okhttp3.*;
-import toolbox.util.Inspector;
-import toolbox.util.UnzippingInterceptor;
+import toolbox.util.HttpAction;
 
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 
-public class HttpTool {
+public abstract class AbstractOKClient implements HttpAction {
 
     static Logger logger = Logger.getLogger("HttpUtil");
 
@@ -20,19 +19,19 @@ public class HttpTool {
             "Accept-Encoding", " gzip, deflate, br",
             "Connection", "keep-alive", "Upgrade-Insecure-Requests", "1");
 
-    static boolean verbose = true;
-    final static OkHttpClient client = new OkHttpClient.Builder()
-            .addNetworkInterceptor(new UnzippingInterceptor()).build();
 
-    public static String get(String url) {
+    protected OkHttpClient okHttpClient;
+    public boolean verbose = true;
+
+    public String get(String url) {
         Request request = new Request.Builder().url(url).headers(DEFAULT_HEADERS).get().build();
         return execNewCall(request);
     }
 
-    private static String execNewCall(Request request) {
+    private String execNewCall(Request request) {
         Response response = null;
         try {
-            response = client.newCall(request).execute();
+            response = okHttpClient.newCall(request).execute();
 
             if (verbose) {
                 printHeader(request.headers(), "request");
@@ -54,7 +53,7 @@ public class HttpTool {
         return null;
     }
 
-    public static String post(String url, Map<String, String> params) {
+    public String post(String url, Map<String, String> params) {
         FormBody.Builder builder = new FormBody.Builder();
         //添加参数
         if (params != null && params.keySet().size() > 0) {
@@ -70,7 +69,7 @@ public class HttpTool {
         return execNewCall(request);
     }
 
-    public static String postJsonParams(String url, String jsonParams) {
+    public String postJsonParams(String url, String jsonParams) {
         RequestBody requestBody = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), jsonParams);
         Request request = new Request.Builder()
                 .url(url)
@@ -80,7 +79,7 @@ public class HttpTool {
         return execNewCall(request);
     }
 
-    private static void printHeader(Headers headers, String label) {
+    private void printHeader(Headers headers, String label) {
         Map<String, List<String>> multimap = headers.toMultimap();
         StringBuilder kv = new StringBuilder();
         kv.append(label + " header:\r\n");
@@ -95,14 +94,6 @@ public class HttpTool {
             kv.append("\r\n");
         }
         kv.append("------------------------------------------------\r\n");
-        System.out.print(kv.toString());
-    }
-
-    public static void main(String[] args) {
-        String s = get("http://www.jlnu.edu.cn");
-        //System.out.print(s);
-        //String s1 = StringFormatUtil.formatToHexStringWithASCII(s.getBytes(), 0, s.getBytes().length, "响应");
-        Inspector.inspect(s.getBytes(),"响应");
-        //System.out.print(s1);
+        logger.info(kv.toString());
     }
 }

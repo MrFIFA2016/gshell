@@ -58,7 +58,7 @@ public class TcpTool {
 
             String time = new SimpleDateFormat("[HH:mm:ss SSS]").format(new Date());
 
-            System.err.println(String.format("%s建立TCP连接 %s - %s  | Port: %s - > %s", time, socket.getLocalAddress().getHostAddress(), IP, localPort, port));
+            logger.info(String.format("%s建立TCP连接 %s - %s  | Port: %s - > %s", time, socket.getLocalAddress().getHostAddress(), IP, localPort, port));
 
             printReq(reqData);
 
@@ -101,7 +101,7 @@ public class TcpTool {
                     socket.close();
                     String time = new SimpleDateFormat("[HH:mm:ss SSS]").format(new Date());
 
-                    System.err.println(String.format("%s关闭TCP连接", time));
+                    logger.info(String.format("%s关闭TCP连接", time));
 
                 } catch (IOException e) {
                     System.out.println("关闭客户机Socket时发生异常,堆栈信息如下");
