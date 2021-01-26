@@ -5,9 +5,11 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import okhttp3.Headers;
 import toolbox.GoodClient;
+import toolbox.util.CommandRunner;
 import toolbox.util.HeaderParser;
 import toolbox.util.Inspector;
 
+import java.io.IOException;
 import java.util.Date;
 
 public class Login {
@@ -51,6 +53,9 @@ public class Login {
 
     private static String getSign(String devicekey, Long ts) {
         //TODO reqDCJ
+        
+        String sig = CommandRunner.exec("echo 123");
+
         return "MEUCIB2YoNt6ucvbnhig1Oeu5NRtpiwX2kjF03CRdcX/cpQlAiEAsPtaY/H0P42N8K23l01s7fs7a88wQeIcDOOH3Vrg/y8=";
     }
 
