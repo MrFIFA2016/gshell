@@ -34,28 +34,22 @@ public class Login {
         String s = client.postJsonParams("https://live-as-sky-adr.game.163.com/account/login", obj.toString());
         JSONObject res = (JSONObject) JSONObject.parse(s);
         System.out.println(JSON.toJSONString(res, true));
-        //Inspector.inspect(s.getBytes(), "响应");
     }
 
     private static JSONObject setValue(JSONObject obj) {
-        String devicekey = obj.getString("device_key");
+        String device_key = obj.getString("device_key");
         Date date = new Date();
         long time = date.getTime() / 1000;
-        String sign = getSign(devicekey, time);
+        String sign = getSign(device_key, time);
         obj.put("sig", sign);
         obj.put("sig_ts", time);
         return obj;
     }
 
     private static String getSign(String devicekey, Long ts) {
-        //TODO reqDCJ
         GoodClient client = GoodClient.getHttpClient(false);
         String param = String.format("http://127.0.0.1:5000/getsig?device_key=%s&sig_ts=%s", devicekey, ts);
         String sig = client.get(param);
-
-        //String sig = CommandRunner.exec("python");
         return sig;
-
-        //return "MEUCIB2YoNt6ucvbnhig1Oeu5NRtpiwX2kjF03CRdcX/cpQlAiEAsPtaY/H0P42N8K23l01s7fs7a88wQeIcDOOH3Vrg/y8=";
     }
 }
