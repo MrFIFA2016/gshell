@@ -95,7 +95,10 @@ public abstract class AbstractOKClient implements HttpAction {
             String name = entry.getKey();
             List<String> values = entry.getValue();
             kv.append("      ");
-            kv.append(name).append(" -> ").append(values);
+            if (values.size() == 1)
+                kv.append(name).append(": ").append(values.get(0));
+            else
+                kv.append(name).append(": ").append(values);
             kv.append("\r\n");
         }
         kv.append("------------------------------------------------\r\n");
