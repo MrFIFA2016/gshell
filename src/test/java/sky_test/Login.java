@@ -6,6 +6,7 @@ import com.alibaba.fastjson.JSONObject;
 import okhttp3.Headers;
 import toolbox.GoodClient;
 import toolbox.util.HeaderParser;
+import toolbox.util.Inspector;
 
 import java.util.Date;
 
@@ -35,12 +36,13 @@ public class Login {
         String s = client.postJsonParams("https://live-as-sky-adr.game.163.com/account/login", obj.toString());
         JSONObject res = (JSONObject) JSONObject.parse(s);
         System.out.print(JSON.toJSONString(res, true));
+        //Inspector.inspect(s.getBytes(), "响应");
     }
 
     private static JSONObject setValue(JSONObject obj) {
         String devicekey = obj.getString("devicekey ");
         Date date = new Date();
-        long time = date.getTime();
+        long time = date.getTime() / 1000;
         String sign = getSign(devicekey, time);
         obj.put("sig", sign);
         obj.put("sig_ts", 1610504362);
