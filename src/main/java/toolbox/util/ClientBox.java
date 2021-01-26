@@ -10,24 +10,24 @@ import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 
 public class ClientBox {
-    static Logger logger = Logger.getLogger("OKClient");
+    Logger logger = Logger.getLogger("OKClient");
+
+    boolean verbose = true;
+
+    public static OkHttpClient createClient(boolean isHttps, boolean verbose) {
+        ClientBox cbox = new ClientBox();
+        cbox.verbose = verbose;
+        return cbox.createClient(isHttps);
+    }
 
     private ClientBox() {
     }
 
-    static boolean verbose = true;
-
-    public static OkHttpClient getClient(boolean isHttps, boolean verbose) {
-        ClientBox.verbose = verbose;
-        if (isHttps)
-            return secClient;
-        return client;
-    }
-
-    static OkHttpClient client;
-    static OkHttpClient secClient;
-
-    static {
+    private OkHttpClient createClient(boolean isHttps) {
+        if (!isHttps) {
+            return new OkHttpClient.Builder()
+                    .addNetworkInterceptor(new UnzippingInterceptor()).build();
+        }
         OkHttpClient.Builder builder = new OkHttpClient.Builder();
         builder.connectTimeout(30, TimeUnit.SECONDS);
 
@@ -53,7 +53,7 @@ public class ClientBox {
                     e.printStackTrace();
                 }
                 //打印所有证书内容
-                if (verbose) {
+                if (false) {
                     for (Certificate c : localCertificates) {
                         logger.info("verify: " + c.toString());
                     }
@@ -61,9 +61,7 @@ public class ClientBox {
                 return true;
             }
         });
-        secClient = builder.addInterceptor(new UnzippingInterceptor()).build();
-        client = new OkHttpClient.Builder()
-                .addNetworkInterceptor(new UnzippingInterceptor()).build();
+        return builder.addInterceptor(new UnzippingInterceptor()).build();
     }
 
     private static class TrustAllManager implements X509TrustManager {

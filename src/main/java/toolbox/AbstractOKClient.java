@@ -1,5 +1,6 @@
 package toolbox;
 
+import com.alibaba.fastjson.JSON;
 import okhttp3.*;
 import toolbox.util.HttpAction;
 
@@ -10,7 +11,7 @@ import java.util.logging.Logger;
 
 public abstract class AbstractOKClient implements HttpAction {
 
-    static Logger logger = Logger.getLogger("HttpUtil");
+    Logger logger = Logger.getLogger("HttpUtil");
 
     Headers DEFAULT_HEADERS = Headers.of(
             "User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv,84.0) Gecko/20100101 Firefox/84.0",
@@ -30,6 +31,8 @@ public abstract class AbstractOKClient implements HttpAction {
 
     public String get(String url) {
         Request request = new Request.Builder().url(url).headers(DEFAULT_HEADERS).get().build();
+        if (verbose)
+            logger.info("Request: method=GT, url=" + url);
         return execNewCall(request);
     }
 
@@ -71,6 +74,8 @@ public abstract class AbstractOKClient implements HttpAction {
                 .post(builder.build())
                 .headers(DEFAULT_HEADERS)
                 .build();
+        if (verbose)
+            logger.info("Request: method=POST, url=" + url + ", param= " + JSON.toJSONString(params));
         return execNewCall(request);
     }
 
@@ -81,6 +86,8 @@ public abstract class AbstractOKClient implements HttpAction {
                 .headers(DEFAULT_HEADERS)
                 .post(requestBody)
                 .build();
+        if (verbose)
+            logger.info("Request: method=POST, url=" + url + ", param= " + jsonParams);
         return execNewCall(request);
     }
 

@@ -1,15 +1,11 @@
 package sky_test;
 
-import cn.hutool.core.util.StrUtil;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import okhttp3.Headers;
 import toolbox.GoodClient;
-import toolbox.util.CommandRunner;
 import toolbox.util.HeaderParser;
-import toolbox.util.Inspector;
 
-import java.io.IOException;
 import java.util.Date;
 
 public class Login {
@@ -25,7 +21,7 @@ public class Login {
     }
 
     public static void main(String[] args) {
-        GoodClient client = GoodClient.getInstance(true);
+        GoodClient client = GoodClient.getHttpsClient(true);
         client.setHeaders(createHeaders());
 
 //        String content = FileUtil.readString("xxx.json", Charset.defaultCharset());
@@ -42,21 +38,24 @@ public class Login {
     }
 
     private static JSONObject setValue(JSONObject obj) {
-        String devicekey = obj.getString("devicekey ");
+        String devicekey = obj.getString("device_key");
         Date date = new Date();
         long time = date.getTime() / 1000;
         String sign = getSign(devicekey, time);
         obj.put("sig", sign);
-        obj.put("sig_ts", 1610504362);
+        obj.put("sig_ts", time);
         return obj;
     }
 
     private static String getSign(String devicekey, Long ts) {
         //TODO reqDCJ
+        GoodClient client = GoodClient.getHttpClient(false);
+        String param = String.format("http://127.0.0.1:5000/getsig?device_key=%s&sig_ts=%s", devicekey, ts);
+        String sig = client.get(param);
 
-        String sig = CommandRunner.exec("python");
+        //String sig = CommandRunner.exec("python");
+        return sig;
 
-        return "MEUCIB2YoNt6ucvbnhig1Oeu5NRtpiwX2kjF03CRdcX/cpQlAiEAsPtaY/H0P42N8K23l01s7fs7a88wQeIcDOOH3Vrg/y8=";
+        //return "MEUCIB2YoNt6ucvbnhig1Oeu5NRtpiwX2kjF03CRdcX/cpQlAiEAsPtaY/H0P42N8K23l01s7fs7a88wQeIcDOOH3Vrg/y8=";
     }
-
 }
