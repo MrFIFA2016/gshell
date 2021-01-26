@@ -53,8 +53,8 @@ public class Login {
 
     private static String getSign(String devicekey, Long ts) {
         //TODO reqDCJ
-        
-        String sig = CommandRunner.exec("echo 123");
+
+        String sig = CommandRunner.exec("python");
 
         return "MEUCIB2YoNt6ucvbnhig1Oeu5NRtpiwX2kjF03CRdcX/cpQlAiEAsPtaY/H0P42N8K23l01s7fs7a88wQeIcDOOH3Vrg/y8=";
     }
