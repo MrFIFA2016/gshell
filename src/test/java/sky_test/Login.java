@@ -1,25 +1,23 @@
 package sky_test;
 
-import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.util.StrUtil;
 import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import okhttp3.Headers;
 import toolbox.GoodClient;
 import toolbox.util.HeaderParser;
 
-import java.nio.charset.Charset;
 import java.util.Date;
 
 public class Login {
 
     static Headers createHeaders() {
-        String headers = "Host: live-as-sky-adr.game.163.com\n" +
-                "User-Agent: Sky-Live-com.netease.sky/0.6.8.158448 (Google Pixel; android 26.0.0; zh-Hans)\n" +
-                "X-Session-ID: 5c64cb17-fdfa-4f2a-b8dc-9a07367eafb0\n" +
-                //"Content-Length: 635\n" +
-                "Connection: close";
+        String headers =
+                "Host: live-as-sky-adr.game.163.com\n" +
+                        "User-Agent: Sky-Live-com.netease.sky/0.6.8.158448 (Google Pixel; android 26.0.0; zh-Hans)\n" +
+                        "X-Session-ID: 5c64cb17-fdfa-4f2a-b8dc-9a07367eafb0\n" +
+                        //"Content-Length: 635\n" +
+                        "Connection: close";
         return HeaderParser.forMaoHaoStr(headers);
     }
 
@@ -53,6 +51,5 @@ public class Login {
         //TODO reqDCJ
         return "MEUCIB2YoNt6ucvbnhig1Oeu5NRtpiwX2kjF03CRdcX/cpQlAiEAsPtaY/H0P42N8K23l01s7fs7a88wQeIcDOOH3Vrg/y8=";
     }
-
 
 }
