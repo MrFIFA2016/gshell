@@ -15,7 +15,7 @@ public class HeaderParser {
         Map map = new LinkedHashMap();
         String[] val = str.split("\n");
         for (String line : val) {
-            String[] kv = line.split(":");
+            String[] kv = line.split(": ");
             map.put(kv[0].trim(), kv[1].trim());
         }
         Headers headers = Headers.of(map);
